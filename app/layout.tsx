@@ -11,9 +11,9 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SafeBites",
+  title: "SafeBites - Your Trusted Food Safety Companion",
   description:
-    "SafeBites - Your trusted guide for allergen-free and safe food choices.",
+    "Analyze food items and detect allergens to make informed food choices safely",
 };
 
 export default function RootLayout({
@@ -23,9 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.variable} ${jetBrainsMono.variable} antialiased`}
-      >
+      <body className={`${inter.variable} ${jetBrainsMono.variable} antialiased flex flex-col items-center justify-center min-h-screen w-full`}>
         {children}
         <Toaster />
         <Analytics />
