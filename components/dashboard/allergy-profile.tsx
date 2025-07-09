@@ -1,217 +1,343 @@
-"use client"
+// "use client"
 
-import { useState, useEffect } from "react"
-// import { supabase } from "@/lib/supabase"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+// import { useState, useEffect } from "react"
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+// import { Button } from "@/components/ui/button"
+// import { Badge } from "@/components/ui/badge"
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import type { ReactNode, SelectHTMLAttributes } from "react";
-type SelectProps = SelectHTMLAttributes<HTMLSelectElement>;
-type SelectContentProps = { children: ReactNode };
-type SelectItemProps = { value: string; children: ReactNode };
-type SelectTriggerProps = { children: ReactNode };
-type SelectValueProps = { placeholder: string };
-const Select = (props: SelectProps) => <select {...props} />;
-const SelectContent = (props: SelectContentProps) => <>{props.children}</>;
-const SelectItem = (props: SelectItemProps) => <option value={props.value}>{props.children}</option>;
-const SelectTrigger = (props: SelectTriggerProps) => <>{props.children}</>;
-const SelectValue = (props: SelectValueProps) => <>{props.placeholder}</>;
-import { Textarea } from "@/components/ui/textarea"
-import { AlertTriangle, Plus, X } from "lucide-react"
-// import { useToast } from "@/hooks/use-toast"
-const useToast = () => ({ toast: (args: { title: string; description?: string; variant?: string }) => alert(args.title + (args.description ? '\n' + args.description : '')) });
+// import { Textarea } from "@/components/ui/textarea"
+// import { AlertTriangle, Plus, X, Shield, Heart, Zap } from "lucide-react"
+// import { toast } from "react-hot-toast";
 
-type Allergy = { id: string; name: string; category: string };
-type UserAllergy = { id: string; allergy_id: string; severity: string; notes?: string; allergies: Allergy };
+// interface User {
+//   id: string;
+//   name: string;
+//   email: string;
+//   emailVerified: boolean;
+//   image?: string;
+//   createdAt: string;
+//   updatedAt: string;
+//   isSubscribed: boolean;
+//   profileComplete: boolean;
+//   allergens: string[];
+//   customAllergens: string[];
+//   age?: number;
+//   sex?: string;
+//   bodyWeight?: number;
+//   diseases: string[];
+// }
 
-export default function AllergyProfile() {
-  const [allergies] = useState<Allergy[]>([{
-    id: "1", name: "Peanuts", category: "Nuts"
-  }, {
-    id: "2", name: "Milk", category: "Dairy"
-  }, {
-    id: "3", name: "Eggs", category: "Protein"
-  }])
-  const [userAllergies, setUserAllergies] = useState<UserAllergy[]>([])
-  const [selectedAllergy, setSelectedAllergy] = useState("")
-  const [selectedSeverity, setSelectedSeverity] = useState("")
-  const [notes, setNotes] = useState("")
-  const [loading, setLoading] = useState(false)
-  const { toast } = useToast()
+// interface AllergyProfileProps {
+//   user: User;
+// }
 
-  useEffect(() => {
-    // loadAllergies()
-    // loadUserAllergies()
-  }, [])
+// interface Allergy {
+//   id: string;
+//   name: string;
+//   category: string;
+// }
 
-  // const loadAllergies = async () => { ... }
-  // const loadUserAllergies = async () => { ... }
+// interface UserAllergy {
+//   id: string;
+//   allergies: Allergy;
+//   severity: string;
+//   notes?: string;
+// }
 
-  const addAllergy = async () => {
-    if (!selectedAllergy || !selectedSeverity) return
-    setLoading(true)
-    try {
-      // Demo: add to local state
-      const allergy = allergies.find(a => a.id === selectedAllergy)
-      if (!allergy) throw new Error("Allergy not found")
-      setUserAllergies(prev => [
-        ...prev,
-        {
-          id: Math.random().toString(36).slice(2),
-          allergy_id: allergy.id,
-          severity: selectedSeverity,
-          notes: notes || undefined,
-          allergies: allergy,
-        },
-      ])
-      toast({
-        title: "Allergy Added",
-        description: "Your allergy profile has been updated.",
-      })
-      setSelectedAllergy("")
-      setSelectedSeverity("")
-      setNotes("")
-      // loadUserAllergies()
-    } catch (error) {
-      console.error("Error adding allergy:", error)
-      toast({
-        title: "Error",
-        description: "Failed to add allergy. Please try again.",
-        variant: "destructive",
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
+// export default function AllergyProfile({ user }: AllergyProfileProps) {
+//   const [allergies, setAllergies] = useState<Allergy[]>([]);
+//   const [userAllergies, setUserAllergies] = useState<UserAllergy[]>([]);
+//   const [selectedAllergy, setSelectedAllergy] = useState("");
+//   const [selectedSeverity, setSelectedSeverity] = useState("");
+//   const [notes, setNotes] = useState("");
+//   const [loading, setLoading] = useState(false);
 
-  const removeAllergy = async (userAllergyId: string) => {
-    try {
-      setUserAllergies(prev => prev.filter(ua => ua.id !== userAllergyId))
-      toast({
-        title: "Allergy Removed",
-        description: "Your allergy profile has been updated.",
-      })
-      // loadUserAllergies()
-    } catch (error) {
-      console.error("Error removing allergy:", error)
-      toast({
-        title: "Error",
-        description: "Failed to remove allergy. Please try again.",
-        variant: "destructive",
-      })
-    }
-  }
+//   useEffect(() => {
+//     loadAllergies();
+//     loadUserAllergies();
+//     // eslint-disable-next-line
+//   }, []);
 
-  const getSeverityColor = (severity: string) => {
-    switch (severity) {
-      case "mild":
-        return "bg-green-100 text-green-800 border-green-200"
-      case "moderate":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200"
-      case "severe":
-        return "bg-orange-100 text-orange-800 border-orange-200"
-      case "life_threatening":
-        return "bg-red-100 text-red-800 border-red-200"
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200"
-    }
-  }
+//   // Fetch all possible allergies (mocked for now)
+//   const loadAllergies = async () => {
+//     setAllergies([
+//       { id: "1", name: "Peanuts", category: "Nuts" },
+//       { id: "2", name: "Milk", category: "Dairy" },
+//       { id: "3", name: "Eggs", category: "Protein" },
+//       { id: "4", name: "Wheat", category: "Grains" },
+//       { id: "5", name: "Soy", category: "Legumes" },
+//       // ...add more as needed
+//     ]);
+//   };
 
-  return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5" />
-            Your Allergy Profile
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {userAllergies.length > 0 ? (
-            <div className="space-y-3">
-              {userAllergies.map((userAllergy) => (
-                <div key={userAllergy.id} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div>
-                      <p className="font-medium">{userAllergy.allergies.name}</p>
-                      <p className="text-sm text-muted-foreground">{userAllergy.allergies.category}</p>
-                      {userAllergy.notes && <p className="text-sm text-muted-foreground mt-1">{userAllergy.notes}</p>}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge className={getSeverityColor(userAllergy.severity)}>
-                      {userAllergy.severity?.replace("_", " ")}
-                    </Badge>
-                    <Button variant="ghost" size="sm" onClick={() => removeAllergy(userAllergy.id)}>
-                      <X className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8">
-              <AlertTriangle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">No allergies added yet</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+//   // Fetch user allergies from user prop (for demo, just use state)
+//   const loadUserAllergies = async () => {
+//     // For demo, do nothing (state is local)
+//     // If you want to pre-populate from user.allergens, you can do so here
+//   };
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Add New Allergy</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Allergen</label>
-              <Select value={selectedAllergy} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedAllergy(e.target.value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select allergen..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {allergies
-                    .filter((allergy) => !userAllergies.some((ua) => ua.allergy_id === allergy.id))
-                    .map((allergy) => (
-                      <SelectItem key={allergy.id} value={allergy.id}>
-                        {allergy.name} ({allergy.category})
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Severity</label>
-              <Select value={selectedSeverity} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedSeverity((e as React.ChangeEvent<HTMLSelectElement>).target.value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select severity..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="mild">Mild</SelectItem>
-                  <SelectItem value="moderate">Moderate</SelectItem>
-                  <SelectItem value="severe">Severe</SelectItem>
-                  <SelectItem value="life_threatening">Life Threatening</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Notes (Optional)</label>
-            <Textarea
-              placeholder="Any additional notes about this allergy..."
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={2}
-            />
-          </div>
-          <Button onClick={addAllergy} disabled={loading || !selectedAllergy || !selectedSeverity} className="w-full">
-            <Plus className="w-4 h-4 mr-2" />
-            {loading ? "Adding..." : "Add Allergy"}
-          </Button>
-        </CardContent>
-      </Card>
-    </div>
-  )
-}
+//   const addAllergy = async () => {
+//     if (!selectedAllergy || !selectedSeverity) return;
+//     setLoading(true);
+//     try {
+//       const allergy = allergies.find((a) => a.id === selectedAllergy);
+//       if (!allergy) return;
+//       setUserAllergies((prev) => [
+//         ...prev,
+//         {
+//           id: uuidv4(),
+//           allergies: allergy,
+//           severity: selectedSeverity,
+//           notes: notes.trim(),
+//         },
+//       ]);
+//       toast.success("Allergy Added! 🎉");
+//       setSelectedAllergy("");
+//       setSelectedSeverity("");
+//       setNotes("");
+//     } catch {
+//       toast.error("Failed to add allergy. Please try again.");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const removeAllergy = async (userAllergyId: string) => {
+//     try {
+//       setUserAllergies((prev) => prev.filter((ua) => ua.id !== userAllergyId));
+//       toast.success("Allergy Removed");
+//     } catch {
+//       toast.error("Failed to remove allergy. Please try again.");
+//     }
+//   };
+
+//   const getSeverityColor = (severity: string) => {
+//     switch (severity) {
+//       case "mild":
+//         return "bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0"
+//       case "moderate":
+//         return "bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0"
+//       case "severe":
+//         return "bg-gradient-to-r from-orange-500 to-red-500 text-white border-0"
+//       case "life_threatening":
+//         return "bg-gradient-to-r from-red-500 to-red-600 text-white border-0"
+//       default:
+//         return "bg-gray-100 text-gray-800 border-gray-200"
+//     }
+//   }
+
+//   const getSeverityIcon = (severity: string) => {
+//     switch (severity) {
+//       case "mild":
+//         return <Heart className="w-3 h-3" />
+//       case "moderate":
+//         return <Zap className="w-3 h-3" />
+//       case "severe":
+//         return <AlertTriangle className="w-3 h-3" />
+//       case "life_threatening":
+//         return <Shield className="w-3 h-3" />
+//       default:
+//         return null
+//     }
+//   }
+
+//   return (
+//     <div className="h-full flex flex-col gap-6">
+//       {/* Stats Overview */}
+//       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+//         <Card className="bg-gradient-to-br from-red-500 to-pink-500 text-white border-0 shadow-lg">
+//           <CardContent className="p-4">
+//             <div className="flex items-center justify-between">
+//               <div>
+//                 <p className="text-red-100 text-sm">Total Allergies</p>
+//                 <p className="text-2xl font-bold">{userAllergies.length}</p>
+//               </div>
+//               <AlertTriangle className="w-8 h-8 text-red-200" />
+//             </div>
+//           </CardContent>
+//         </Card>
+
+//         <Card className="bg-gradient-to-br from-orange-500 to-red-500 text-white border-0 shadow-lg">
+//           <CardContent className="p-4">
+//             <div className="flex items-center justify-between">
+//               <div>
+//                 <p className="text-orange-100 text-sm">Severe Allergies</p>
+//                 <p className="text-2xl font-bold">
+//                   {userAllergies.filter((ua) => ua.severity === "severe" || ua.severity === "life_threatening").length}
+//                 </p>
+//               </div>
+//               <Shield className="w-8 h-8 text-orange-200" />
+//             </div>
+//           </CardContent>
+//         </Card>
+
+//         <Card className="bg-gradient-to-br from-blue-500 to-cyan-500 text-white border-0 shadow-lg">
+//           <CardContent className="p-4">
+//             <div className="flex items-center justify-between">
+//               <div>
+//                 <p className="text-blue-100 text-sm">Profile Complete</p>
+//                 <p className="text-2xl font-bold">{userAllergies.length > 0 ? "100%" : "0%"}</p>
+//               </div>
+//               <Heart className="w-8 h-8 text-blue-200" />
+//             </div>
+//           </CardContent>
+//         </Card>
+//       </div>
+
+//       <div className="flex-1 flex gap-6">
+//         {/* Current Allergies */}
+//         <Card className="flex-1 bg-white/80 backdrop-blur-sm border border-white/20 shadow-lg">
+//           <CardHeader>
+//             <CardTitle className="flex items-center gap-2 text-gray-800">
+//               <AlertTriangle className="w-5 h-5 text-red-500" />
+//               Your Allergy Profile
+//             </CardTitle>
+//           </CardHeader>
+//           <CardContent className="h-[calc(100%-80px)]">
+//             {userAllergies.length > 0 ? (
+//               <div className="space-y-4 h-full overflow-y-auto pr-2">
+//                 {userAllergies.map((userAllergy) => (
+//                   <div key={userAllergy.id} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+//                     <div className="flex items-start justify-between">
+//                       <div className="flex-1">
+//                         <div className="flex items-center gap-3 mb-2">
+//                           <h3 className="font-semibold text-gray-800">{userAllergy.allergies.name}</h3>
+//                           <Badge className={getSeverityColor(userAllergy.severity)}>
+//                             {getSeverityIcon(userAllergy.severity)}
+//                             <span className="ml-1 capitalize">{userAllergy.severity?.replace("_", " ")}</span>
+//                           </Badge>
+//                         </div>
+//                         <p className="text-sm text-gray-600 mb-1">
+//                           <span className="font-medium">Category:</span> {userAllergy.allergies.category}
+//                         </p>
+//                         {userAllergy.notes && (
+//                           <p className="text-sm text-gray-600">
+//                             <span className="font-medium">Notes:</span> {userAllergy.notes}
+//                           </p>
+//                         )}
+//                       </div>
+//                       <Button
+//                         variant="ghost"
+//                         size="sm"
+//                         onClick={() => removeAllergy(userAllergy.id)}
+//                         className="text-red-500 hover:text-red-700 hover:bg-red-50"
+//                       >
+//                         <X className="w-4 h-4" />
+//                       </Button>
+//                     </div>
+//                   </div>
+//                 ))}
+//               </div>
+//             ) : (
+//               <div className="h-full flex items-center justify-center text-center">
+//                 <div className="space-y-4">
+//                   <div className="w-16 h-16 bg-gradient-to-br from-red-100 to-pink-100 rounded-full flex items-center justify-center mx-auto">
+//                     <AlertTriangle className="w-8 h-8 text-red-500" />
+//                   </div>
+//                   <div>
+//                     <h3 className="text-lg font-semibold text-gray-800 mb-2">No Allergies Added Yet</h3>
+//                     <p className="text-gray-600 text-sm max-w-md">
+//                       Add your allergies to get personalized food safety analysis and recommendations.
+//                     </p>
+//                   </div>
+//                 </div>
+//               </div>
+//             )}
+//           </CardContent>
+//         </Card>
+
+//         {/* Add New Allergy */}
+//         <Card className="w-1/3 bg-white/80 backdrop-blur-sm border border-white/20 shadow-lg">
+//           <CardHeader>
+//             <CardTitle className="flex items-center gap-2 text-gray-800">
+//               <Plus className="w-5 h-5 text-green-500" />
+//               Add New Allergy
+//             </CardTitle>
+//           </CardHeader>
+//           <CardContent className="space-y-4">
+//             <div className="space-y-2">
+//               <label className="text-sm font-medium text-gray-700">Allergen</label>
+//               <Select value={selectedAllergy} onValueChange={setSelectedAllergy}>
+//                 <SelectTrigger className="bg-white">
+//                   <SelectValue placeholder="Select allergen..." />
+//                 </SelectTrigger>
+//                 <SelectContent>
+//                   {allergies
+//                     .filter((allergy) => !userAllergies.some((ua) => ua.allergies.id === allergy.id))
+//                     .map((allergy) => (
+//                       <SelectItem key={allergy.id} value={allergy.id}>
+//                         {allergy.name} ({allergy.category})
+//                       </SelectItem>
+//                     ))}
+//                 </SelectContent>
+//               </Select>
+//             </div>
+
+//             <div className="space-y-2">
+//               <label className="text-sm font-medium text-gray-700">Severity Level</label>
+//               <Select value={selectedSeverity} onValueChange={setSelectedSeverity}>
+//                 <SelectTrigger className="bg-white">
+//                   <SelectValue placeholder="Select severity..." />
+//                 </SelectTrigger>
+//                 <SelectContent>
+//                   <SelectItem value="mild">
+//                     <div className="flex items-center gap-2">
+//                       <Heart className="w-4 h-4 text-green-500" />
+//                       Mild
+//                     </div>
+//                   </SelectItem>
+//                   <SelectItem value="moderate">
+//                     <div className="flex items-center gap-2">
+//                       <Zap className="w-4 h-4 text-yellow-500" />
+//                       Moderate
+//                     </div>
+//                   </SelectItem>
+//                   <SelectItem value="severe">
+//                     <div className="flex items-center gap-2">
+//                       <AlertTriangle className="w-4 h-4 text-orange-500" />
+//                       Severe
+//                     </div>
+//                   </SelectItem>
+//                   <SelectItem value="life_threatening">
+//                     <div className="flex items-center gap-2">
+//                       <Shield className="w-4 h-4 text-red-500" />
+//                       Life Threatening
+//                     </div>
+//                   </SelectItem>
+//                 </SelectContent>
+//               </Select>
+//             </div>
+
+//             <div className="space-y-2">
+//               <label className="text-sm font-medium text-gray-700">Additional Notes</label>
+//               <Textarea
+//                 placeholder="Any specific symptoms, triggers, or important details..."
+//                 value={notes}
+//                 onChange={(e) => setNotes(e.target.value)}
+//                 rows={3}
+//                 className="resize-none bg-white"
+//               />
+//             </div>
+
+//             <Button
+//               onClick={addAllergy}
+//               disabled={loading || !selectedAllergy || !selectedSeverity}
+//               className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+//             >
+//               <Plus className="w-4 h-4 mr-2" />
+//               {loading ? "Adding..." : "Add Allergy"}
+//             </Button>
+
+//             <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+//               <h4 className="text-sm font-semibold text-blue-800 mb-2">💡 Pro Tip</h4>
+//               <p className="text-xs text-blue-700">
+//                 Be as specific as possible with your allergies. This helps our AI provide more accurate analysis and
+//                 safer recommendations.
+//               </p>
+//             </div>
+//           </CardContent>
+//         </Card>
+//       </div>
+//     </div>
+//   )
+// }

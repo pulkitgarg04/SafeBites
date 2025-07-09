@@ -1,35 +1,41 @@
 "use client"
 
-// import type React from "react"
+import type React from "react"
+
 import { useState } from "react"
-// import { supabase } from "@/lib/supabase"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import type { ReactNode, SelectHTMLAttributes } from "react";
-type SelectProps = SelectHTMLAttributes<HTMLSelectElement>;
-type SelectContentProps = { children: ReactNode };
-type SelectItemProps = { value: string; children: ReactNode };
-type SelectTriggerProps = { children: ReactNode };
-type SelectValueProps = { placeholder: string };
-const Select = (props: SelectProps) => <select {...props} />;
-const SelectContent = (props: SelectContentProps) => <>{props.children}</>;
-const SelectItem = (props: SelectItemProps) => <option value={props.value}>{props.children}</option>;
-const SelectTrigger = (props: SelectTriggerProps) => <>{props.children}</>;
-const SelectValue = (props: SelectValueProps) => <>{props.placeholder}</>;
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { User, AlertTriangle } from "lucide-react"
-// import { useToast } from "@/hooks/use-toast"
-const useToast = () => ({ toast: (args: { title: string; description?: string; variant?: string }) => alert(args.title + (args.description ? '\n' + args.description : '')) });
+import { toast } from "react-hot-toast";
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  emailVerified: boolean;
+  image?: string;
+  createdAt: string;
+  updatedAt: string;
+  isSubscribed: boolean;
+  profileComplete: boolean;
+  allergens: string[];
+  customAllergens: string[];
+  age?: number;
+  sex?: string;
+  bodyWeight?: number;
+  diseases: string[];
+}
 
 interface ProfileSetupProps {
-  // user: { id: string; email: string }; // Remove if not used
+  user: User;
   onComplete: () => void;
 }
 
-export default function ProfileSetup({ onComplete }: ProfileSetupProps) {
-  const [loading, setLoading] = useState(false)
+export default function ProfileSetup({ user, onComplete }: ProfileSetupProps) {
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     full_name: "",
     age: "",
@@ -38,8 +44,7 @@ export default function ProfileSetup({ onComplete }: ProfileSetupProps) {
     phone: "",
     emergency_contact: "",
     emergency_phone: "",
-  })
-  const { toast } = useToast()
+  });
 
   const countries = [
     "United States",
@@ -53,33 +58,36 @@ export default function ProfileSetup({ onComplete }: ProfileSetupProps) {
     "Brazil",
     "Mexico",
     "Other",
-  ]
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-
+    e.preventDefault();
+    setLoading(true);
     try {
-      // Demo: simulate saving profile
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      // const { error } = await supabase.from("users").upsert({ ... })
-      // if (error) throw error
-      toast({
-        title: "Profile Created!",
-        description: "Your profile has been set up successfully.",
-      })
-      onComplete()
+      // Call user API to create/update profile
+      await fetch("/api/user", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: user.id,
+          name: formData.full_name,
+          age: formData.age ? parseInt(formData.age) : undefined,
+          sex: formData.sex,
+          country: formData.country,
+          phone: formData.phone,
+          emergency_contact: formData.emergency_contact,
+          emergency_phone: formData.emergency_phone,
+        }),
+      });
+      toast.success("Profile Created!");
+      onComplete();
     } catch (error) {
-      console.error("Error saving profile:", error)
-      toast({
-        title: "Error",
-        description: "Failed to save profile. Please try again.",
-        variant: "destructive",
-      })
+      console.error("Error saving profile:", error);
+      toast.error("Failed to save profile. Please try again.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -121,7 +129,7 @@ export default function ProfileSetup({ onComplete }: ProfileSetupProps) {
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="sex">Sex</Label>
-                <Select value={formData.sex} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, sex: e.target.value })}>
+                <Select value={formData.sex} onValueChange={(value) => setFormData({ ...formData, sex: value })}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select..." />
                   </SelectTrigger>
@@ -137,7 +145,7 @@ export default function ProfileSetup({ onComplete }: ProfileSetupProps) {
                 <Label htmlFor="country">Country</Label>
                 <Select
                   value={formData.country}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, country: e.target.value })}
+                  onValueChange={(value) => setFormData({ ...formData, country: value })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select country..." />

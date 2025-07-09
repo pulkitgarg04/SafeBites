@@ -1,46 +1,32 @@
 "use client"
 
 import { useState } from "react"
-// import { supabase } from "@/lib/supabase"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Check, CreditCard, Zap } from "lucide-react"
-// import { useToast } from "@/hooks/use-toast"
-const useToast = () => ({ toast: (args: { title: string; description?: string; variant?: string }) => alert(args.title + (args.description ? '\n' + args.description : '')) });
+import { toast } from "react-hot-toast";
 
 export default function SubscriptionCard() {
   const [loading, setLoading] = useState(false)
-  const { toast } = useToast()
 
   const handleSubscribe = async () => {
     setLoading(true)
 
     try {
-      // Simulate subscription process
-      // In production, you'd integrate with Stripe or another payment processor
-
-      // For demo, we'll create an active subscription
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      // const { error } = await supabase.from("subscriptions").upsert({ ... })
-      // if (error) throw error
-
-      toast({
-        title: "Subscription Activated!",
-        description: "Welcome to SafeBites! You now have 100 credits to use.",
-      })
-
-      // Refresh the page to update subscription status
-      window.location.reload()
+      // Call subscription API to create a new subscription
+      await fetch("/api/subscription", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ /* add required subscription fields here */ }),
+      });
+      toast.success("Subscription Activated! Welcome to SafeBites! You now have 100 credits to use.");
+      window.location.reload();
     } catch (error) {
-      console.error("Subscription error:", error)
-      toast({
-        title: "Subscription Failed",
-        description: "Please try again or contact support.",
-        variant: "destructive",
-      })
+      console.error("Subscription error:", error);
+      toast.error("Subscription Failed. Please try again or contact support.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
