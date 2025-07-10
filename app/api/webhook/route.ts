@@ -1,4 +1,7 @@
 import crypto from "crypto";
+import { PrismaClient } from "@/prisma/generated/prisma";
+
+const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
@@ -18,19 +21,49 @@ export async function POST(req: Request) {
       throw new Error("Invalid signature.");
     }
 
-    console.log(body);
-
     if (eventType === "order_created") {
       const userId: string = body.meta.custom_data.user_id;
       const isSuccessful = body.data.attributes.status === "paid";
 
-      console.log(userId);
-      console.log(isSuccessful);
+      if(isSuccessful) {
+        const user = await prisma.user.findUnique({
+          where: { id: userId },
+        })
+
+        if (!user) {
+          throw new Error(`User with ID ${userId} not found.`);
+        }
+
+        await prisma.subscription.upsert({
+          where: { id: userId },
+          create: {
+            userId,
+            credits: 100,
+            creditsUsed: 0,
+            purchaseDate: new Date(),
+          },
+          update: {
+            credits: 100,
+            creditsUsed: 0,
+            purchaseDate: new Date(),
+            updatedAt: new Date(),
+          },
+        });
+
+        await prisma.user.update({
+          where: { id: userId },
+          data: { isSubscribed: true },
+        });
+
+        console.log(`Subscription created for user ${userId}`);
+      }
     }
 
     return Response.json({ message: "Webhook received" });
   } catch (err) {
     console.error(err);
     return Response.json({ message: "Server error" }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }

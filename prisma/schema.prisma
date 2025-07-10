@@ -36,19 +36,18 @@ enum Sex {
 }
 
 model Subscription {
-  id         String   @id @default(uuid())
-  userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  credits    Int      @default(100)
-  creditsUsed Int     @default(0)
-  startDate  DateTime
-  endDate    DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  credits      Int      @default(100)
+  creditsUsed  Int      @default(0)
+  purchaseDate DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model User {
-  id            String    @id
+  id            String         @id
   name          String
   email         String
   emailVerified Boolean
@@ -57,7 +56,7 @@ model User {
   updatedAt     DateTime
   sessions      Session[]
   accounts      Account[]
-  subscriptions   Subscription[]
+  subscriptions Subscription[]
 
   isSubscribed    Boolean    @default(false)
   profileComplete Boolean    @default(false)
