@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import AIChat from "@/components/dashboard/ai-chat";
 import { Header } from "@/components/dashboard/header";
+import axios from "axios";
 
 interface User {
   id: string;
@@ -26,50 +27,35 @@ interface User {
   emergency_phone?: string;
 }
 
-interface Subscription {
-  id: string;
-  userId: string;
-  credits: number;
-  creditsUsed: number;
-  startDate: string;
-  endDate: string;
-  createdAt: string;
-  updatedAt: string;
-}
+// interface Subscription {
+//   id: string;
+//   userId: string;
+//   credits: number;
+//   creditsUsed: number;
+//   startDate: string;
+//   endDate: string;
+//   createdAt: string;
+//   updatedAt: string;
+// }
 
 export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null);
-  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  // const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const userRes = await fetch("/api/user");
-      const users = await userRes.json();
-      setUser(users[0] || null);
-      if (users[0]) {
-        const subRes = await fetch(`/api/subscription?userId=${users[0].id}`);
-        const subs = await subRes.json();
-        setSubscription(subs[0] || null);
-      } else {
-        setSubscription(null);
-      }
-    } catch {
-      setUser(null);
-      setSubscription(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchData();
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get("/api/user");
+        setUser(res.data);
+      } catch {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUser();
   }, []);
-
-  const refreshData = () => {
-    fetchData();
-  };
 
   if (loading) {
     return (
@@ -83,17 +69,19 @@ export default function Dashboard() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600 font-medium">User not found.</p>
+          <span className="text-3xl font-bold text-gray-700 animate-pulse">User not found</span>
         </div>
       </div>
     );
   }
 
-  const remainingCredits = subscription
-    ? subscription.credits - (subscription.creditsUsed || 0)
-    : 0;
+  // const remainingCredits = subscription
+  //   ? subscription.credits - (subscription.creditsUsed || 0)
+  //   : 0;
+  const remainingCredits = 50;
+  const subscription = true;
 
   return (
     <div className="min-h-screen">
@@ -104,7 +92,6 @@ export default function Dashboard() {
           user={user}
           hasActiveSubscription={!!subscription}
           remainingCredits={remainingCredits}
-          onCreditUpdate={refreshData}
         />
       </div>
     </div>

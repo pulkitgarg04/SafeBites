@@ -33,7 +33,6 @@ interface AIChatProps {
   user: User;
   hasActiveSubscription: boolean;
   remainingCredits: number;
-  onCreditUpdate: () => void;
 }
 
 type Allergen = {
@@ -138,7 +137,7 @@ function AlternativesList({ alternatives }: AlternativesListProps) {
   );
 }
 
-export default function AIChat({ user, remainingCredits, onCreditUpdate }: AIChatProps) {
+export default function AIChat({ user, remainingCredits }: AIChatProps) {
   const [textInput, setTextInput] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
@@ -207,7 +206,6 @@ export default function AIChat({ user, remainingCredits, onCreditUpdate }: AICha
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: user.id, creditsUsed: 1 }),
       });
-      onCreditUpdate();
     } catch {
       toast.error("Failed to analyze food. Please try again.");
     } finally {
@@ -244,7 +242,6 @@ export default function AIChat({ user, remainingCredits, onCreditUpdate }: AICha
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: user.id, creditsUsed: 1 }),
       });
-      onCreditUpdate();
     } catch {
       toast.error("Failed to analyze food. Please try again.");
     } finally {

@@ -1,24 +1,26 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@/prisma/generated/prisma';
+import { NextRequest, NextResponse } from "next/server";
+import { PrismaClient } from "@/prisma/generated/prisma";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 const prisma = new PrismaClient();
 
 export async function GET() {
   try {
-    const users = await prisma.user.findMany();
-    return NextResponse.json(users);
-  } catch {
-    return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
-  }
-}
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
 
-export async function POST(req: NextRequest) {
-  try {
-    const data = await req.json();
-    const user = await prisma.user.create({ data });
-    return NextResponse.json(user);
+    if (!session || !session.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    return NextResponse.json(session.user);
   } catch {
-    return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch users" },
+      { status: 500 }
+    );
   }
 }
 
@@ -29,16 +31,9 @@ export async function PUT(req: NextRequest) {
     const user = await prisma.user.update({ where: { id }, data: updateData });
     return NextResponse.json(user);
   } catch {
-    return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to update user" },
+      { status: 500 }
+    );
   }
 }
-
-export async function DELETE(req: NextRequest) {
-  try {
-    const { id } = await req.json();
-    await prisma.user.delete({ where: { id } });
-    return NextResponse.json({ success: true });
-  } catch {
-    return NextResponse.json({ error: 'Failed to delete user' }, { status: 500 });
-  }
-} 

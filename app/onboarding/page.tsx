@@ -1,23 +1,34 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, ArrowRight, Zap } from "lucide-react";
 import Image from "next/image";
+import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function OnboardingPage() {
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
-  const handleGetStarted = () => {
+  const handleGetStarted = async () => {
     setLoading(true);
-    setTimeout(() => {
-      router.push("/dashboard");
-    }, 1000);
+    try {
+      const response = await axios.post("/api/subscription", {
+        productId: "890596"
+      });
+
+      toast.success("Redirecting to checkout...");
+
+      window.open(response.data.checkoutUrl, "_blank");
+    } catch(err) {
+      console.log(err);
+      toast.error("Failed to process your subscription request");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const features = [
@@ -33,6 +44,7 @@ export default function OnboardingPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Toaster />
       <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
