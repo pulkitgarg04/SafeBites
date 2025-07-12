@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
         <div className="space-y-4">
           <div className="flex items-center gap-2 font-bold">
-            SafeBites
+          <span className="bg-gradient-to-b from-[rgba(255,167,86,1)] to-[rgba(238,96,44,1)] bg-clip-text text-transparent text-xl">SafeBites</span>
           </div>
           <p className="text-sm text-muted-foreground">
             Your trusted companion for making informed food choices. Our mission is to empower everyone to enjoy food without fear.

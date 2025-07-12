@@ -60,12 +60,12 @@ export default function Navbar() {
         <div className="hidden md:flex gap-4 items-center">
           <Link
             href="/auth/login"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
           >
             Log in
           </Link>
-          <Link href="/auth/signup">
-            <Button className="rounded-full">
+          <Link href="/auth/signup" className="cursor-pointer">
+            <Button className="rounded-[6px] bg-[linear-gradient(181deg,_#5E5E5E_18.12%,_#000_99.57%)] shadow-[0px_4px_8px_0px_rgba(3,_7,_18,_0.06),_0px_2px_4px_0px_rgba(3,_7,_18,_0.06), 0px_0px_0px_1px_rgba(3,_7,_18,_0.08),_0px_1px_1px_2px_rgba(255,_255,_255,_0.40)_inset, 0px_-1px_5px_2px_rgba(255,_255,_255,_0.40)_inset] text-white">
               Get Started
               <ChevronRight className="ml-1 size-4" />
             </Button>

@@ -205,7 +205,7 @@ export default function UserSettings({ user, onUserUpdate }: UserSettingsProps) 
             {!editing ? (
               <Button
                 onClick={() => setEditing(true)}
-                className="bg-blue-500 hover:bg-blue-600"
+                className="rounded-[6px] bg-[linear-gradient(181deg,_#5E5E5E_18.12%,_#000_99.57%)] shadow-[0px_4px_8px_0px_rgba(3,_7,_18,_0.06),_0px_2px_4px_0px_rgba(3,_7,_18,_0.06), 0px_0px_0px_1px_rgba(3,_7,_18,_0.08),_0px_1px_1px_2px_rgba(255,_255,_255,_0.40)_inset, 0px_-1px_5px_2px_rgba(255,_255,_255,_0.40)_inset] text-white"
               >
                 <Edit className="w-4 h-4 mr-2" />
                 Edit Profile
@@ -411,7 +411,6 @@ export default function UserSettings({ user, onUserUpdate }: UserSettingsProps) 
         </Card>
       </div>
 
-      {/* Change Password Modal */}
       {showPasswordModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
@@ -511,7 +510,7 @@ export default function UserSettings({ user, onUserUpdate }: UserSettingsProps) 
               <Button
                 onClick={handlePasswordChange}
                 disabled={passwordLoading || !passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword}
-                className="flex-1 bg-blue-500 hover:bg-blue-600"
+                className="flex-1 rounded-[6px] bg-[linear-gradient(181deg,_#5E5E5E_18.12%,_#000_99.57%)] shadow-[0px_4px_8px_0px_rgba(3,_7,_18,_0.06),_0px_2px_4px_0px_rgba(3,_7,_18,_0.06), 0px_0px_0px_1px_rgba(3,_7,_18,_0.08),_0px_1px_1px_2px_rgba(255,_255,_255,_0.40)_inset, 0px_-1px_5px_2px_rgba(255,_255,_255,_0.40)_inset] text-white"
               >
                 {passwordLoading ? "Changing..." : "Change Password"}
               </Button>

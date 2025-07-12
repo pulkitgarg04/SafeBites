@@ -110,36 +110,31 @@ function AlternativesList({ alternatives }: AlternativesListProps) {
   if (alternatives.length === 0) {
     return (
       <div className="text-center py-6">
-        <p className="text-slate-500">
-          No alternatives to suggest at this time.
-        </p>
+        <p className="text-slate-500">No alternatives to suggest at this time.</p>
       </div>
-    );
+    )
   }
 
   return (
-    <div className="space-y-4">
-      <h3 className="text-lg font-medium text-slate-800">
-        Suggested Alternatives
-      </h3>
+    <div className="space-y-4 h-full flex-1 overflow-y-auto">
+      <h3 className="text-lg font-medium text-slate-800">Suggested Alternatives</h3>
+      <div className="overflow-y-auto max-h-[300]">
       <ul className="space-y-3">
         {alternatives.map((alternative, index) => (
           <li key={index} className="p-3 rounded-md bg-slate-50">
             <h4 className="font-medium text-slate-800">{alternative.name}</h4>
-            <p className="text-sm text-slate-600 mt-1">
-              {alternative.description}
-            </p>
+            <p className="text-sm text-slate-600 mt-1">{alternative.description}</p>
           </li>
         ))}
       </ul>
+      </div>
     </div>
-  );
+  )
 }
 
 export default function AIChat({ user, remainingCredits }: AIChatProps) {
   const [textInput, setTextInput] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [filePreview, setFilePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ allergens: Allergen[]; alternatives: Alternative[] } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -158,7 +153,6 @@ export default function AIChat({ user, remainingCredits }: AIChatProps) {
         body: JSON.stringify({ id: user.id, creditsUsed: 1 }),
       });
 
-      // Fetch AI content from /api/check-allergens
       const res = await fetch("/api/check-allergens", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -208,7 +202,6 @@ export default function AIChat({ user, remainingCredits }: AIChatProps) {
     } finally {
       setLoading(false);
       setSelectedImage(null);
-      setFilePreview(null);
     }
   };
 
@@ -216,15 +209,13 @@ export default function AIChat({ user, remainingCredits }: AIChatProps) {
     const file = e.target.files?.[0] || null;
     if (file) {
       setSelectedImage(file);
-      setFilePreview(URL.createObjectURL(file));
     } else {
       setSelectedImage(null);
-      setFilePreview(null);
     }
   };
 
   return (
-    <div className="h-full flex flex-col gap-6">
+    <div className="h-full flex flex-col gap-6 max-w-7xl mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="bg-[#FAEFE6] text-[#856C62] border-0 shadow-xl">
           <CardContent className="p-4">
@@ -237,7 +228,6 @@ export default function AIChat({ user, remainingCredits }: AIChatProps) {
             </div>
           </CardContent>
         </Card>
-
         <Card className="bg-[#D3E6FF] text-[#485562] border-0 shadow-xl">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -249,7 +239,6 @@ export default function AIChat({ user, remainingCredits }: AIChatProps) {
             </div>
           </CardContent>
         </Card>
-
         <Card className="bg-[#b3d2c6] text-[#3d6e5d] border-0 shadow-xl">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -257,31 +246,17 @@ export default function AIChat({ user, remainingCredits }: AIChatProps) {
                 <p className="text-[#3d6e5d] text-sm">Food Compatibility</p>
                 <p className="text-2xl font-bold">-</p>
               </div>
-              {/* 
-
-                let score = 100;
-                if (directAllergenMatch) score -= 50;
-                if (mayContainMatch) score -= 20;
-                if (crossContaminationRisk) score -= 10;
-                if (severeAllergy) score -= 20;
-                score = Math.max(0, score);
-              
-              */}
               <Shield className="w-8 h-8 text-[#3d6e5d]" />
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <div className="flex-1 flex gap-6 min-h-0">
-        <Card className="min-w-[340px] max-w-[400px] w-full border-0 shadow-xl flex-shrink-0">
+      <div className="flex gap-6 min-h-0 flex-1">
+        <Card className="w-96 border-0 shadow-xl flex-shrink-0">
           <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-2">
-              AI Food Analyzer
-            </CardTitle>
-            <Badge className="w-fit">
-              {remainingCredits} Credits Remaining
-            </Badge>
+            <CardTitle className="flex items-center gap-2">AI Food Analyzer</CardTitle>
+            <Badge className="w-fit">{remainingCredits} Credits Remaining</Badge>
           </CardHeader>
           <CardContent className="space-y-4">
             <Tabs defaultValue="text" className="w-full">
@@ -294,106 +269,82 @@ export default function AIChat({ user, remainingCredits }: AIChatProps) {
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="text" className="space-y-4 mt-4">
-                <form onSubmit={handleTextSubmit} className="space-y-4">
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">
-                      Describe the food or enter ingredients
-                    </label>
-                    <Textarea
-                      placeholder="e.g., 'Chocolate chip cookies with wheat flour, eggs, milk, and nuts', 'Granola bar with peanut allergies?'"
-                      value={textInput}
-                      onChange={(e) => setTextInput(e.target.value)}
-                      rows={4}
-                      className="resize-none overflow-auto max-h-40"
-                      disabled={loading}
-                    />
-                  </div>
-                  <Button
-                    type="submit"
-                    disabled={loading || !textInput.trim()}
-                    className="w-full"
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Analyzing...
-                      </>
-                    ) : (
-                      <>
-                        Analyze Food
-                      </>
-                    )}
-                  </Button>
-                </form>
+              <TabsContent value="text" className="mt-4">
+                <div className="h-80 flex flex-col">
+                  <form onSubmit={handleTextSubmit} className="space-y-4 flex-1 flex flex-col">
+                    <div className="flex-1 flex flex-col">
+                      <label className="text-sm font-medium mb-2 block">Describe the food or enter ingredients</label>
+                      <Textarea
+                        placeholder="e.g., 'Chocolate chip cookies with wheat flour, eggs, milk, and nuts', 'Granola bar with peanut allergies?'"
+                        value={textInput}
+                        onChange={(e) => setTextInput(e.target.value)}
+                        className="flex-1 resize-none"
+                        disabled={loading}
+                      />
+                    </div>
+                    <Button type="submit" disabled={loading || !textInput.trim()} className="w-full">
+                      {loading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Analyzing...
+                        </>
+                      ) : (
+                        "Analyze Food"
+                      )}
+                    </Button>
+                  </form>
+                </div>
               </TabsContent>
 
-              <TabsContent value="image" className="space-y-4 mt-4">
-                <form onSubmit={handleImageSubmit} className="space-y-4">
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">
-                      Upload food image or ingredient label
-                    </label>
-                    <div className="border-2 border-dashed rounded-lg p-6 text-center">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        ref={fileInputRef}
-                        className="hidden"
-                      />
-                      {filePreview ? (
-                        <div className="space-y-2">
-                          <ImageIcon className="w-8 h-8 mx-auto" />
-                          <p className="text-sm font-medium">{selectedImage?.name}</p>
-                          <div className="flex justify-center">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={filePreview}
-                              alt="Uploaded Preview"
-                              className="max-w-xs h-auto border border-gray-300 rounded-lg"
-                            />
+              <TabsContent value="image" className="mt-4">
+                <div className="h-80 flex flex-col">
+                  <form onSubmit={handleImageSubmit} className="space-y-4 flex-1 flex flex-col">
+                    <div className="flex-1 flex flex-col">
+                      <label className="text-sm font-medium mb-2 block">Upload food image or ingredient label</label>
+                      <div className="flex-1 border-2 border-dashed rounded-lg p-6 flex items-center justify-center">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          ref={fileInputRef}
+                          className="hidden"
+                        />
+                        {selectedImage ? (
+                          <div className="space-y-2 text-center">
+                            <ImageIcon className="w-8 h-8 mx-auto" />
+                            <p className="text-sm font-medium truncate overflow-hidden whitespace-nowrap max-w-[200px] mx-auto">{selectedImage?.name}</p>
                           </div>
-                          <Button
-                            type="submit"
-                            disabled={loading}
-                          >
-                            {loading ? (
-                              <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Analyzing...
-                              </>
-                            ) : (
-                              "Analyze Image"
-                            )}
-                          </Button>
-                        </div>
-                      ) : (
-                        <div className="space-y-2">
-                          <Upload className="w-8 h-8 mx-auto" />
-                          <p className="text-sm">Click to upload an image of food or ingredient label</p>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => fileInputRef.current?.click()}
-                          >
-                            Choose Image
-                          </Button>
-                        </div>
-                      )}
+                        ) : (
+                          <div className="space-y-2 text-center">
+                            <Upload className="w-8 h-8 mx-auto" />
+                            <p className="text-sm">Click to upload an image of food or ingredient label</p>
+                            <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
+                              Choose Image
+                            </Button>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </form>
+                    <Button type="submit" disabled={loading || !selectedImage} className="w-full">
+                      {loading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Analyzing...
+                        </>
+                      ) : (
+                        "Analyze Image"
+                      )}
+                    </Button>
+                  </form>
+                </div>
               </TabsContent>
             </Tabs>
           </CardContent>
         </Card>
 
-        <Card className="flex-1 min-w-0 border-0 shadow-xl flex flex-col">
+        <Card className="w-96 border-0 shadow-xl flex-shrink-0 flex flex-col">
           <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-2">
-              Analysis Results
-            </CardTitle>
+            <CardTitle className="flex items-center gap-2">Analysis Results</CardTitle>
           </CardHeader>
           <CardContent className="flex-1 min-h-0 flex flex-col">
             {loading ? (
@@ -401,20 +352,22 @@ export default function AIChat({ user, remainingCredits }: AIChatProps) {
                 <Loader2 className="h-8 w-8 text-gray-400 animate-spin" />
               </div>
             ) : result ? (
-              <Tabs defaultValue="allergens" className="w-full">
-                <TabsList className="w-full grid grid-cols-2 mb-2">
+              <Tabs defaultValue="allergens" className="w-full flex-1 flex flex-col">
+                <TabsList className="w-full grid grid-cols-2 mb-4">
                   <TabsTrigger value="allergens">Allergens</TabsTrigger>
                   <TabsTrigger value="alternatives">Alternatives</TabsTrigger>
                 </TabsList>
-                <TabsContent value="allergens">
-                  <AllergenList allergens={result.allergens} />
-                </TabsContent>
-                <TabsContent value="alternatives">
-                  <AlternativesList alternatives={result.alternatives} />
-                </TabsContent>
+                <div className="flex-1 min-h-0">
+                  <TabsContent value="allergens" className="h-full overflow-y-auto">
+                    <AllergenList allergens={result.allergens} />
+                  </TabsContent>
+                  <TabsContent value="alternatives" className="h-full overflow-y-auto flex-1">
+                    <AlternativesList alternatives={result.alternatives} />
+                  </TabsContent>
+                </div>
               </Tabs>
             ) : (
-              <div className="h-full flex items-center justify-center text-center">
+              <div className="flex-1 flex items-center justify-center text-center">
                 <div className="space-y-4">
                   <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto bg-gray-100">
                     <ImageIcon className="w-8 h-8" />

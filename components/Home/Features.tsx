@@ -1,6 +1,5 @@
 import React from 'react'
 import { Search, Shield, Heart, ListChecks, AlertTriangle, Star } from 'lucide-react';
-import { Badge } from "@/components/ui/badge";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 
 interface GridItemProps {
@@ -84,11 +83,8 @@ export default function Features() {
   return (
     <section id="features" className="w-full py-20 md:py-32 flex flex-col items-center justify-center">
       <div className="container px-4 md:px-6 flex flex-col items-center justify-center">
-        <Badge className="rounded-full px-4 py-1.5 text-sm font-medium" variant="secondary">
-          Features
-        </Badge>
-        <h2 className="text-3xl md:text-4xl font-bold tracking-tight mt-4">Features for Safer Eating</h2>
-        <p className="max-w-[800px] text-muted-foreground md:text-lg mb-10 text-center">
+        <h2 className="text-3xl md:text-4xl font-bold tracking-tight mt-4">Features for <span className="bg-gradient-to-b from-[rgba(255,167,86,1)] to-[rgba(238,96,44,1)] bg-clip-text text-transparent">Safer Eating</span></h2>
+        <p className="max-w-[800px] text-muted-foreground md:text-lg mb-10 text-center mt-5">
           SafeBites offers powerful tools to help you detect allergens, find safe alternatives, and make confident food choices — anywhere, anytime.
         </p>
         <ul className="grid grid-cols-1 grid-rows-none gap-4 md:grid-cols-12 md:grid-rows-3 lg:gap-4 xl:max-h-[34rem] xl:grid-rows-2 w-full">

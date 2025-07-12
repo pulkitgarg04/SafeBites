@@ -1,9 +1,9 @@
 import React from 'react'
 import { motion } from "framer-motion";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
+import Link from 'next/link';
 
 export default function Pricing() {
   return (
@@ -18,10 +18,7 @@ export default function Pricing() {
               transition={{ duration: 0.5 }}
               className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
             >
-              <Badge className="rounded-full px-4 py-1.5 text-sm font-medium" variant="secondary">
-                Pricing
-              </Badge>
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Simple, Transparent Pricing</h2>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Simple, Transparent <span className="bg-gradient-to-b from-[rgba(255,167,86,1)] to-[rgba(238,96,44,1)] bg-clip-text text-transparent">Pricing</span></h2>
               <p className="max-w-[800px] text-muted-foreground md:text-lg">
                 One affordable plan. All features.
               </p>
@@ -60,9 +57,11 @@ export default function Pricing() {
                         Priority support
                       </li>
                     </ul>
-                    <Button className="w-full mt-auto rounded-full bg-primary hover:bg-primary/90" variant="default">
+                    <Link href="/auth/signup">
+                    <Button className="cursor-pointer w-full mt-auto rounded-full bg-primary hover:bg-primary/90" variant="default">
                       Get Started
                     </Button>
+                    </Link>
                   </CardContent>
                 </Card>
               </motion.div>

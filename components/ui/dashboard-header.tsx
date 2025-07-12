@@ -79,36 +79,30 @@ function MobileNav() {
   );
 }
 
-export function Navbar({ banner }: { banner?: React.ReactNode }) {
+export function Navbar() {
   return (
     <Disclosure as="header">
       <PlusGrid>
-        <PlusGridRow className="relative flex justify-between">
+        <PlusGridRow className="relative flex justify-between items-center">
           <div className="relative flex gap-6">
             <PlusGridItem className="py-3">
               <Link href="/" title="Home">
                 <div className="flex items-center space-x-2">
-                  {/* Flex container to align items horizontally */}
                   <div className="-mt-1">
                     <Image
                       src="/favicon.png"
                       alt="SafeBites Logo"
-                      width={30}
-                      height={30}
+                      width={40}
+                      height={40}
                       className="mr-2"
                     />
                   </div>
-                  <span className="hidden font-bold md:inline-block">
+                  <span className="hidden font-bold md:inline-block text-xl">
                     SafeBites
                   </span>
                 </div>
               </Link>
             </PlusGridItem>
-            {banner && (
-              <div className="relative hidden items-center py-3 lg:flex">
-                {banner}
-              </div>
-            )}
           </div>
           <DesktopNav />
           <MobileNavButton />

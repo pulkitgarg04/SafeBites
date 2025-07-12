@@ -1,9 +1,9 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
 import { Safari } from "../browser/safari";
 import { HeroBadge } from "../ui/hero-badge";
+import Link from "next/link";
 
 export default function Hero() {
   return (
@@ -19,22 +19,16 @@ export default function Hero() {
         >
           <HeroBadge text="Allergy Safety Made Simple" />
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
-            Your Trusted Food Allergy Companion
+            Your Trusted <span className="bg-gradient-to-b from-[rgba(255,167,86,1)] to-[rgba(238,96,44,1)] bg-clip-text text-transparent">Food Allergy</span> Companion
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            SafeBites helps you make informed food choices by analyzing food
+            <span className="bg-gradient-to-b from-[rgba(255,167,86,1)] to-[rgba(238,96,44,1)] bg-clip-text text-transparent">SafeBites</span> helps you make informed food choices by analyzing food
             items and ingredient lists to detect potential allergens and
             recommend safe alternatives. Enjoy food without fear—empower
             yourself and your loved ones to eat safely, anywhere.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="relative inline-flex h-12 overflow-hidden rounded-full p-[2px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50">
-              <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
-              <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-3 py-1 text-sm font-medium text-white backdrop-blur-3xl">
-                Try Now
-                <ArrowRight className="ml-2 size-4" />
-              </span>
-            </button>
+            <Link href="#features">
             <Button
               size="lg"
               variant="outline"
@@ -42,6 +36,7 @@ export default function Hero() {
             >
               Learn More
             </Button>
+            </Link>
           </div>
         </motion.div>
 
