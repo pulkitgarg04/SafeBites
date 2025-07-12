@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, ArrowRight, Zap } from "lucide-react";
+import { Check, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
@@ -45,19 +45,6 @@ export default function OnboardingPage() {
   return (
     <div className="min-h-screen bg-background">
       <Toaster />
-      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 font-bold">
-              <span className="text-xl">SafeBites</span>
-            </div>
-            <Badge variant="outline" className="text-sm">
-              Step 1 of 2
-            </Badge>
-          </div>
-        </div>
-      </div>
-
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
           <motion.div
@@ -80,12 +67,8 @@ export default function OnboardingPage() {
             </h1>
             <p className="text-xl text-muted-foreground mb-6 max-w-2xl mx-auto">
               Your journey to safer eating starts here. Get AI-powered allergen
-              detection and personalized food recommendations for just $5/month.
+              detection and personalized food recommendations for just $5.
             </p>
-            <Badge className="bg-green-100 text-green-800 border-green-200 px-4 py-2">
-              <Zap className="w-4 h-4 mr-2" />
-              Limited Time: First Month Only $5
-            </Badge>
           </motion.div>
 
           <motion.div
@@ -108,12 +91,6 @@ export default function OnboardingPage() {
                 </CardTitle>
                 <div className="flex items-center justify-center gap-2">
                   <span className="text-5xl font-bold">$5</span>
-                  <div className="text-left">
-                    <div className="text-muted-foreground">/month</div>
-                    <div className="text-sm text-muted-foreground">
-                      billed monthly
-                    </div>
-                  </div>
                 </div>
               </CardHeader>
 

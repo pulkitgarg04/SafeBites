@@ -50,6 +50,7 @@ export default function Hero() {
             <div className="relative">
               <Safari
                 url="safebites.vercel.app"
+                videoSrc="/demonstration-safebites.mp4"
                 mode="simple"
                 className="size-full"
               />

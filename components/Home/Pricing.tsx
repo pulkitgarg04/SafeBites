@@ -36,7 +36,6 @@ export default function Pricing() {
                     <h3 className="text-2xl font-bold">SafeBites Plan</h3>
                     <div className="flex items-baseline mt-4">
                       <span className="text-4xl font-bold">$5</span>
-                      <span className="text-muted-foreground ml-1">/month</span>
                     </div>
                     <p className="text-muted-foreground mt-2">Allergy detection, safe alternatives, and more for one low price.</p>
                     <ul className="space-y-3 my-6 flex-grow">
