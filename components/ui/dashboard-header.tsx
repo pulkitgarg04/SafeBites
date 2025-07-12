@@ -16,7 +16,6 @@ import Image from "next/image";
 
 const links = [
   { href: "/dashboard", label: "AI Assistant" },
-  { href: "/dashboard/allergens", label: "Allergens" },
   { href: "/dashboard/settings", label: "Settings" },
 ];
 

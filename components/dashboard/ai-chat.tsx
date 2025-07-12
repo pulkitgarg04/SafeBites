@@ -31,7 +31,6 @@ interface User {
 
 interface AIChatProps {
   user: User;
-  hasActiveSubscription: boolean;
   remainingCredits: number;
 }
 
@@ -145,52 +144,6 @@ export default function AIChat({ user, remainingCredits }: AIChatProps) {
   const [result, setResult] = useState<{ allergens: Allergen[]; alternatives: Alternative[] } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const generateMockAllergenResponse = (
-    query: string
-  ): { allergens: Allergen[]; alternatives: Alternative[] } => {
-    if (query.toLowerCase().includes("peanut")) {
-      return {
-        allergens: [
-          { name: "Peanut", severity: "high" },
-          { name: "Soy", severity: "medium" },
-        ],
-        alternatives: [
-          { name: "Sunflower Seed Butter", description: "A nut-free spread alternative." },
-          { name: "Pumpkin Seeds", description: "Safe for most nut allergies and high in protein." },
-        ],
-      };
-    }
-    if (query.toLowerCase().includes("milk")) {
-      return {
-        allergens: [
-          { name: "Milk", severity: "high" },
-          { name: "Wheat", severity: "medium" },
-        ],
-        alternatives: [
-          { name: "Oat Milk", description: "A dairy-free milk alternative." },
-          { name: "Almond Milk", description: "Check for nut allergies before use." },
-        ],
-      };
-    }
-    if (Math.random() > 0.5) {
-      return {
-        allergens: [],
-        alternatives: [
-          { name: "Quinoa", description: "A gluten-free grain alternative." },
-        ],
-      };
-    }
-    return {
-      allergens: [
-        { name: "Tree Nuts", severity: "high" },
-        { name: "Egg", severity: "low" },
-      ],
-      alternatives: [
-        { name: "Chia Seeds", description: "Can be used as an egg substitute in baking." },
-      ],
-    };
-  };
-
   const handleTextSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!textInput.trim()) {
@@ -199,13 +152,24 @@ export default function AIChat({ user, remainingCredits }: AIChatProps) {
     }
     setLoading(true);
     try {
-      const mock = generateMockAllergenResponse(textInput.trim());
-      setResult(mock);
       await fetch("/api/subscription", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: user.id, creditsUsed: 1 }),
       });
+
+      // Fetch AI content from /api/check-allergens
+      const res = await fetch("/api/check-allergens", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ foodInput: textInput.trim() }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to analyze allergens");
+      }
+      const data = await res.json();
+      setResult(data);
     } catch {
       toast.error("Failed to analyze food. Please try again.");
     } finally {
@@ -214,19 +178,6 @@ export default function AIChat({ user, remainingCredits }: AIChatProps) {
     }
   };
 
-  // Handle image upload
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    if (file) {
-      setSelectedImage(file);
-      setFilePreview(URL.createObjectURL(file));
-    } else {
-      setSelectedImage(null);
-      setFilePreview(null);
-    }
-  };
-
-  // Handle image submit (mocked)
   const handleImageSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedImage) {
@@ -235,17 +186,38 @@ export default function AIChat({ user, remainingCredits }: AIChatProps) {
     }
     setLoading(true);
     try {
-      const mock = generateMockAllergenResponse(selectedImage.name);
-      setResult(mock);
       await fetch("/api/subscription", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: user.id, creditsUsed: 1 }),
       });
+
+      const res = await fetch("/api/check-allergens", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ foodInput: selectedImage.name }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to analyze allergens");
+      }
+      const data = await res.json();
+      setResult(data);
     } catch {
       toast.error("Failed to analyze food. Please try again.");
     } finally {
       setLoading(false);
+      setSelectedImage(null);
+      setFilePreview(null);
+    }
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    if (file) {
+      setSelectedImage(file);
+      setFilePreview(URL.createObjectURL(file));
+    } else {
       setSelectedImage(null);
       setFilePreview(null);
     }
@@ -302,7 +274,6 @@ export default function AIChat({ user, remainingCredits }: AIChatProps) {
       </div>
 
       <div className="flex-1 flex gap-6 min-h-0">
-        {/* Left: Analyzer */}
         <Card className="min-w-[340px] max-w-[400px] w-full border-0 shadow-xl flex-shrink-0">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2">
@@ -418,7 +389,6 @@ export default function AIChat({ user, remainingCredits }: AIChatProps) {
           </CardContent>
         </Card>
 
-        {/* Right: Results */}
         <Card className="flex-1 min-w-0 border-0 shadow-xl flex flex-col">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2">

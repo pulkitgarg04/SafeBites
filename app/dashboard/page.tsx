@@ -27,34 +27,38 @@ interface User {
   emergency_phone?: string;
 }
 
-// interface Subscription {
-//   id: string;
-//   userId: string;
-//   credits: number;
-//   creditsUsed: number;
-//   startDate: string;
-//   endDate: string;
-//   createdAt: string;
-//   updatedAt: string;
-// }
+interface Subscription {
+  id: string;
+  userId: string;
+  credits: number;
+  creditsUsed: number;
+  startDate: string;
+  endDate: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null);
-  // const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchUserAndSubscription = async () => {
       try {
-        const res = await axios.get("/api/user");
-        setUser(res.data);
+        const userRes = await axios.get("/api/user");
+        setUser(userRes.data);
+
+        const subRes = await axios.get("/api/subscription/info");
+        setSubscription(subRes.data);
       } catch {
         setUser(null);
+        setSubscription(null);
       } finally {
         setLoading(false);
       }
     };
-    fetchUser();
+    fetchUserAndSubscription();
   }, []);
 
   if (loading) {
@@ -77,20 +81,16 @@ export default function Dashboard() {
     );
   }
 
-  // const remainingCredits = subscription
-  //   ? subscription.credits - (subscription.creditsUsed || 0)
-  //   : 0;
-  const remainingCredits = 50;
-  const subscription = true;
+  const remainingCredits = subscription
+    ? subscription.credits - (subscription.creditsUsed || 0)
+    : 0;
 
   return (
     <div className="min-h-screen">
       <Header />
-
       <div className="container mx-auto px-6 py-8 h-[calc(100vh-120px)]">
         <AIChat
           user={user}
-          hasActiveSubscription={!!subscription}
           remainingCredits={remainingCredits}
         />
       </div>
